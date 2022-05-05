@@ -45,13 +45,14 @@ const common = {
     path: path.resolve(__dirname, '../dist'),
     filename: '[name].[contenthash].js',
     clean: true,
+    publicPath: '/'
   },
   resolve: {
     extensions: ['.js', '.jsx'],
     alias: {
-      '@styles': path.resolve(__dirname, '../src/styles/'),
+      '@src': path.resolve(__dirname, '../src/'),
+      '@pages': path.resolve(__dirname, '../src/pages/'),
       '@components': path.resolve(__dirname, '../src/components/'),
-      '@assets': path.resolve(__dirname, '../src/assets/'),
       '@store': path.resolve(__dirname, '../src/store/'),
     }
   },
