@@ -1,19 +1,23 @@
 import {
   createUserWithEmailAndPassword,
   updateProfile,
-  signInWithEmailAndPassword
+  signInWithEmailAndPassword,
+  signOut,
 } from 'firebase/auth';
 
 import { auth } from './init-config';
 import { getTranslation } from './utils';
 
-export const createUser = async ({ email, password }) => {
+export const createUser = async ({ email, password, displayName }) => {
+  console.log('creando usuario createUserWithEmailAndPassword', email, password);
   return createUserWithEmailAndPassword(auth, email, password)
-    .then(userCredential => {
+    .then(async (userCredential) => {
+      const { user } = userCredential;
       console.log('Se creó un usuario con las siguientes credenciales: ', userCredential);
+      await updateUser(user, { displayName, photoURL: 'fd' });
       return {
         success: true,
-        userCredential,
+        user,
         message: 'User created successfully',
       };
     })
@@ -29,14 +33,18 @@ export const updateUser = (user, { displayName, photoURL }) => {
 
 export const loginUser = async (email, password) => {
   return signInWithEmailAndPassword(auth, email, password)
-    .then((userCredential) => {
+    .then(({ user }) => {
       return {
         success: true,
-        userCredential,
+        user,
       };
     })
     .catch(err => ({
       success: false,
       message: getTranslation(err?.code)
     }));
+};
+
+export const logoutFirebaseUser = () => {
+  signOut(auth);
 };
