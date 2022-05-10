@@ -1,9 +1,19 @@
-import React from 'react'
-import { useLocation, useNavigate, useResolvedPath } from 'react-router-dom';
+import { Container, Typography } from '@mui/material';
+import React from 'react';
+import { useLocation } from 'react-router-dom';
 
-export const TempPage = () => {
+export const TempPage = ({ text = '' }) => {
   const location = useLocation();
   return (
-    <div>A dummy temp page in: {location.href}</div>
-  )
-}
+    <Container >
+      <Typography
+        component='h1'
+        variant='h5'
+        marginTop='6rem'
+        textAlign='center'
+      >
+        {text} {location.href}
+      </Typography>
+    </Container>
+  );
+};

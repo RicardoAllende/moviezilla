@@ -6,12 +6,11 @@ import { useDispatch, useSelector } from 'react-redux';
 export const SnackBarNotification = () => {
   const dispatch = useDispatch();
   const { snackbar } = useSelector(store => store.notificationsReducer);
-  console.log('Renderizando snackbar', snackbar);
 
   return (
     <Snackbar
       open={snackbar.show}
-      autoHideDuration={3000}
+      autoHideDuration={5000}
       onClose={() => dispatch(hideSnackbarAction())}
       message={snackbar.message}
     />

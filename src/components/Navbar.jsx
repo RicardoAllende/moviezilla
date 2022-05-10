@@ -12,17 +12,26 @@ import Avatar from '@mui/material/Avatar';
 import Button from '@mui/material/Button';
 import Tooltip from '@mui/material/Tooltip';
 import MenuItem from '@mui/material/MenuItem';
-import { getNavigationRoutes, getProfileRoutes } from '@src/commons/routeUtils';
+import { getNavigationRoutes, getProfileRoutes, getPublicPages } from '@src/commons/routeUtils';
 import { useNavigate } from 'react-router-dom';
 import { MovieZillaIcon } from './MovieZillaIcon';
+import { logoutFirebaseUser } from '@src/services/firebase/auth';
+import { useDispatch, useSelector } from 'react-redux';
+import { loginPath } from '@src/commons/routes';
+import { userLogOutAction } from '@src/store/actions/user.actions';
 
+const publicPages = getPublicPages();
 const pages = getNavigationRoutes();
 const settings = getProfileRoutes();
 
 export const Navbar = () => {
+  const dispatch = useDispatch();
   const navigate = useNavigate();
   const [anchorElNav, setAnchorElNav] = useState(null);
   const [anchorElUser, setAnchorElUser] = useState(null);
+
+  const { userReducer } = useSelector(state => state);
+  const isLoggedIn = !!userReducer.uid;
 
   const handleOpenNavMenu = (event) => {
     setAnchorElNav(event.currentTarget);
@@ -39,37 +48,43 @@ export const Navbar = () => {
     setAnchorElUser(null);
   };
 
+  const closeSession = () => {
+    setAnchorElUser(null);
+    dispatch(userLogOutAction());
+    logoutFirebaseUser().then(() => {
+      navigate(loginPath);
+    });
+  };
 
   return (
-    <AppBar position="static">
-      <Container maxWidth="xl">
+    <AppBar position='static'>
+      <Container maxWidth='xl'>
         <Toolbar disableGutters>
           <MovieZillaIcon sx={{
-
             background: 'white',
           }} />
           <Typography
-            variant="h6"
+            variant='h6'
             noWrap
-            component="div"
-            sx={{ mx: 2, display: { xs: 'none', md: 'flex' } }}
+            component='div'
+            sx={{ mx: 2, display: { xs: 'none', sm: 'flex' }, color: 'white' }}
           >
             MovieZilla
           </Typography>
-
-          <Box sx={{ flexGrow: 1, display: { xs: 'flex', md: 'none' } }}>
+          <Box sx={{ flexGrow: 1, display: { xs: isLoggedIn ? 'flex' : 'none', md: 'none' } }}>
             <IconButton
-              size="large"
-              aria-label="account of current user"
-              aria-controls="menu-appbar"
-              aria-haspopup="true"
+              size='large'
+              aria-label='account of current user'
+              aria-controls='menu-appbar'
+              aria-haspopup='true'
               onClick={handleOpenNavMenu}
-              color="inherit"
+              color='inherit'
             >
               <MenuIcon />
             </IconButton>
+
             <Menu
-              id="menu-appbar"
+              id='menu-appbar'
               anchorEl={anchorElNav}
               anchorOrigin={{
                 vertical: 'bottom',
@@ -88,21 +103,14 @@ export const Navbar = () => {
             >
               {pages.map((page) => (
                 <MenuItem key={page.path} onClick={() => navigate(page.path)}>
-                  <Typography textAlign="center">{page.displayName}</Typography>
+                  <Typography textAlign='center'>{page.displayName}</Typography>
                 </MenuItem>
               ))}
             </Menu>
           </Box>
-          <Typography
-            variant="h6"
-            noWrap
-            component="div"
-            sx={{ flexGrow: 1, display: { xs: 'flex', md: 'none' } }}
-          >
-            MovieZilla
-          </Typography>
+
           <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' } }}>
-            {pages.map((page) => (
+            {isLoggedIn && pages.map((page) => (
               <Button
                 key={page.path}
                 onClick={() => navigate(page.path)}
@@ -113,15 +121,15 @@ export const Navbar = () => {
             ))}
           </Box>
 
-          <Box sx={{ flexGrow: 0 }}>
-            <Tooltip title="Open settings">
+          <Box sx={isLoggedIn ? { flexGrow: 0 } : { flexGrow: 0, display: 'none' }}>
+            <Tooltip title='Open settings'>
               <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
-                <Avatar alt="Remy Sharp" src="/static/images/avatar/2.jpg" />
+                <Avatar alt='Remy Sharp' src='/static/images/avatar/2.jpg' />
               </IconButton>
             </Tooltip>
             <Menu
               sx={{ mt: '45px' }}
-              id="menu-appbar"
+              id='menu-appbar'
               anchorEl={anchorElUser}
               anchorOrigin={{
                 vertical: 'top',
@@ -136,12 +144,27 @@ export const Navbar = () => {
               onClose={handleCloseUserMenu}
             >
               {settings.map((setting) => (
-                <MenuItem key={setting.path} onClick={() => navigate(setting.path)}>
-                  <Typography textAlign="center">{setting.displayName}</Typography>
+                <MenuItem key={setting.path} onClick={() => { setAnchorElUser(null); navigate(setting.path); }}>
+                  <Typography textAlign='center'>{setting.displayName}</Typography>
                 </MenuItem>
               ))}
+              <MenuItem onClick={closeSession}>
+                <Typography textAlign='center'>Cerrar sesión</Typography>
+              </MenuItem>
             </Menu>
           </Box>
+
+          {!isLoggedIn && (
+            publicPages.map((page) => (
+              <Button
+                key={page.path}
+                onClick={() => navigate(page.path)}
+                sx={{ marginLeft: 2, color: 'white', display: 'block' }}
+              >
+                {page.displayName}
+              </Button>
+            ))
+          )}
         </Toolbar>
       </Container >
     </AppBar >

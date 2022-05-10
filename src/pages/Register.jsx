@@ -1,18 +1,17 @@
-import React, { useRef } from 'react';
+import React from 'react';
 import Button from '@mui/material/Button';
 import CssBaseline from '@mui/material/CssBaseline';
 import FormControlLabel from '@mui/material/FormControlLabel';
-import Checkbox from '@mui/material/Checkbox';
 import MaterialLink from '@mui/material/Link';
 import Grid from '@mui/material/Grid';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
-import { Link } from 'react-router-dom';
-import { loginPath } from '@src/commons/routes';
+import { Link, useNavigate } from 'react-router-dom';
+import { homePath, loginPath } from '@src/commons/routes';
 import { Facebook, Google } from '@mui/icons-material';
 import { MovieZillaIcon } from '@src/components/MovieZillaIcon';
-import { FormContainer, TextFieldElement, PasswordElement } from 'react-hook-form-mui';
+import { FormContainer, TextFieldElement, PasswordElement, CheckboxElement } from 'react-hook-form-mui';
 import { emailRegex } from '@src/utils/regularExpressions';
 import { createUser } from '@src/services/firebase/auth';
 import { useDispatch } from 'react-redux';
@@ -21,16 +20,23 @@ import { showSnackbarAction } from '@src/store/actions/notifications.actions';
 
 export default () => {
   const dispatch = useDispatch();
+  const navigate = useNavigate();
+
   const handleSubmit = async (data) => {
+    // console.log('La información es: ', data, data.sendEmail, !!data.sendEmail);
+    // return;
     const user = createUser({
       password: data.password,
       email: data.email,
-      displayName: `${data.firstName} ${data.lastName}`
+      displayName: `${data.firstName} ${data.lastName}`,
+      verifyEmail: !!data.sendEmail,
     }).then((response) => {
       if (response.success) {
+        dispatch(userLoginAction(response.user));
         dispatch(showSnackbarAction({ message: `Bienvenido, ${data.firstName}` }));
+        navigate(homePath);
       } else {
-        dispatch(showSnackbarAction({ message: `Hubo un error, vea la consola para más detalles, ${response.message}` }));
+        dispatch(showSnackbarAction({ message: `${response.message}` }));
         console.error('El erro es: ', response);
       }
     });
@@ -38,7 +44,7 @@ export default () => {
   };
 
   return (
-    <Container component="main" maxWidth="xs">
+    <Container component='main' maxWidth='xs'>
       <CssBaseline />
       <Box
         sx={{
@@ -49,22 +55,22 @@ export default () => {
         }}
       >
         <MovieZillaIcon />
-        <Typography component="h1" variant="h5">
+        <Typography component='h1' variant='h5'>
           Regístrate en MovieZilla
         </Typography>
         <Button
-          type="submit"
+          type='submit'
           fullWidth
-          variant="outlined"
+          variant='outlined'
           sx={{ my: 1 }}
           startIcon={<Facebook />}
         >
           Registrar con Facebook
         </Button>
         <Button
-          type="submit"
+          type='submit'
           fullWidth
-          variant="outlined"
+          variant='outlined'
           sx={{ my: 1 }}
           startIcon={<Google />}
         >
@@ -75,7 +81,7 @@ export default () => {
           defaultValues={{
             firstName: 'Ricardo',
             lastName: 'Allende',
-            email: 'ricardo.allende.p@gmail.com',
+            email: 'rinosaurio@yopmail.com',
             password: 'Secret123',
             confirmPassword: 'Secret123'
           }}
@@ -85,12 +91,12 @@ export default () => {
           <Grid container spacing={2}>
             <Grid item xs={12} sm={6}>
               <TextFieldElement
-                autoComplete="given-name"
-                name="firstName"
+                autoComplete='given-name'
+                name='firstName'
                 required
                 fullWidth
-                id="firstName"
-                label="Nombre"
+                id='firstName'
+                label='Nombre'
                 autoFocus
               />
             </Grid>
@@ -98,10 +104,10 @@ export default () => {
               <TextFieldElement
                 required
                 fullWidth
-                id="lastName"
-                label="Apellido"
-                name="lastName"
-                autoComplete="family-name"
+                id='lastName'
+                label='Apellido'
+                name='lastName'
+                autoComplete='family-name'
 
               />
             </Grid>
@@ -109,10 +115,10 @@ export default () => {
               <TextFieldElement
                 required
                 fullWidth
-                id="email"
-                label="Correo electrónico"
-                name="email"
-                autoComplete="email"
+                id='email'
+                label='Correo electrónico'
+                name='email'
+                autoComplete='email'
                 validation={{ pattern: { value: emailRegex, message: 'Invalid email' } }}
                 pattern={emailRegex}
               />
@@ -121,21 +127,21 @@ export default () => {
               <PasswordElement
                 required
                 fullWidth
-                name="password"
-                label="Contraseña"
-                type="password"
-                id="password"
+                name='password'
+                label='Contraseña'
+                type='password'
+                id='password'
                 onChange={(...params) => console.log('Haciendo cambio con: ', params)}
-                autoComplete="new-password"
+                autoComplete='new-password'
               />
             </Grid>
             <Grid item xs={12}>
               <PasswordElement
                 required
                 fullWidth
-                id="confirmPassword"
-                label="Confirmar contraseña"
-                name="confirmPassword"
+                id='confirmPassword'
+                label='Confirmar contraseña'
+                name='confirmPassword'
                 validation={{
                   validate: () => {
                     return password?.value === confirmPassword?.value || 'Las contraseñas no coinciden';
@@ -145,22 +151,23 @@ export default () => {
             </Grid>
             <Grid item xs={12}>
               <FormControlLabel
-                control={<Checkbox value="allowExtraEmails" color="primary" />}
-                label="Me gustaría recibir recomendaciones por email."
+                sx={{ px: '1rem' }}
+                control={<CheckboxElement name='sendEmail' color='primary' />}
+                label='Me gustaría confirmar mi email.'
               />
             </Grid>
           </Grid>
           <Button
-            type="submit"
+            type='submit'
             fullWidth
-            variant="contained"
+            variant='contained'
             sx={{ mt: 3, mb: 2 }}
           >
             Regístrame
           </Button>
-          <Grid container justifyContent="flex-end">
+          <Grid container justifyContent='flex-end'>
             <Grid item>
-              <MaterialLink component={Link} to={loginPath} href="#" variant="body2">
+              <MaterialLink component={Link} to={loginPath} href='#' variant='body2'>
                 ¿Ya tienes una cuenta? Inicia sesión
               </MaterialLink>
             </Grid>

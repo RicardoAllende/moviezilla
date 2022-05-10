@@ -1,8 +1,8 @@
-import { FormExample } from '@src/components/FormExample';
 import React from 'react';
+import { TempPage } from './TempPage';
 
 export const Home = () => {
   return (
-    <FormExample />
+    <TempPage text='Home page' />
   );
 };
