@@ -1,4 +1,7 @@
-import { homeId, loginId, paramSeparator, routes } from './routes';
+import React from 'react';
+import { GuardedComponent } from '@src/components/GuardedComponent';
+import { Route } from 'react-router-dom';
+import { homeId, loginId, paramSeparator, routeGuards, routes } from './routes';
 
 export const findRouteById = (id) => {
   const route = routes[id];
@@ -51,12 +54,27 @@ export const resolveUri = (routeId, optionalParams = {}) => {
   return replacePathParams(route.path, optionalParams);
 };
 
-export const getRoutesByTag = (tag) => {
+export const getRoutesByScope = (tag) => {
   return Object.keys(routes)
     .map(routeKey => routes[routeKey])
-    .filter(route => route?.tags.includes(tag));
+    .filter(route => route?.scopes.includes(tag));
 };
 
-export const getProfileRoutes = () => getRoutesByTag('profile');
+export const getProfileRoutes = () => getRoutesByScope('profile');
 
-export const getNavigationRoutes = () => getRoutesByTag('navigation');
+export const getNavigationRoutes = () => getRoutesByScope('navigation');
+
+export const getPublicPages = () => getRoutesByScope('public-page');
+
+export const renderRouteWithGuards = (route) => {
+  const { guards: routeGuardIds, component: Component, path } = route;
+
+  const hasGuards = routeGuardIds.length > 0;
+  const guardResolvers = routeGuardIds.map(guard => routeGuards[guard]);
+
+  const element = (hasGuards)
+    ? (<GuardedComponent guards={guardResolvers} element={<Component></Component>} />)
+    : (<Component />);
+
+  return (<Route key={path} path={path} element={element} />);
+};
