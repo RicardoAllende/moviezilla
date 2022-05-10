@@ -4,11 +4,12 @@ import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import { routes } from './commons/routes';
 import { Navbar } from './components/Navbar';
 import { useDispatch } from 'react-redux';
-import { userLoginActionIfNotLoggedIn} from './store/actions/user.actions';
+import { userLoginActionIfNotLoggedIn } from './store/actions/user.actions';
 import { auth } from './services/firebase/init-config';
 import { SnackBarNotification } from './components/SnackBarNotification';
 import { renderRouteWithGuards } from './commons/routeUtils';
 import { DarkModeThemeProvider } from './hocs/DarkModeThemeProvider.hoc';
+import { getMovie } from './services/movies/MoviesService';
 
 
 const App = () => {
@@ -21,6 +22,7 @@ const App = () => {
   };
 
   useEffect(() => {
+    // getMovie(550).then(({ data }) => console.log(data));
     const unsubscribe = auth.onAuthStateChanged(firebaseUser => {
       console.log('El usuario registrado es: ', firebaseUser);
       if (firebaseUser) {
