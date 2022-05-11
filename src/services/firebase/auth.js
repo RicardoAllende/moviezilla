@@ -4,7 +4,9 @@ import {
   signInWithEmailAndPassword,
   signOut,
   sendEmailVerification,
+  signInWithPopup,
 } from 'firebase/auth';
+import { AUTH_PROVIDERS } from './firebase.types';
 
 import { auth } from './init-config';
 import { getTranslation } from './utils';
@@ -52,4 +54,28 @@ export const loginUser = async (email, password) => {
 
 export const logoutFirebaseUser = () => {
   return signOut(auth);
+};
+
+export const loginWithExternalProvider = async (providerName) => {
+  const providerClass = AUTH_PROVIDERS[providerName];
+  if (!providerClass) {
+    throw new Error(`${providerName} is not implemented!`);
+  }
+
+  const provider = new providerClass();
+  return signInWithPopup(auth, provider)
+    .then(function (result) {
+      console.log('The result is: ', result);
+      const credentials = providerClass.credentialFromResult(result);
+      console.log(`The credentials are: `, credentials);
+      return {
+        user: result.user,
+        credentials,
+        success: true,
+      };
+    })
+    .catch(err => ({
+      success: false,
+      message: getTranslation(err?.code)
+    }));
 };

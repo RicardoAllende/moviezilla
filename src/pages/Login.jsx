@@ -6,38 +6,35 @@ import Grid from '@mui/material/Grid';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
-import { Facebook, Google } from '@mui/icons-material';
+import { GitHub, Google } from '@mui/icons-material';
 import { MovieZillaIcon } from '@src/components/MovieZillaIcon';
 import { Link, useNavigate } from 'react-router-dom';
 import { homePath, registerPath } from '@src/commons/routes';
 import { FormContainer, TextFieldElement } from 'react-hook-form-mui';
-import { loginUser } from '@src/services/firebase/auth';
+import { loginUser, loginWithExternalProvider } from '@src/services/firebase/auth';
 import { emailRegex } from '@src/utils/regularExpressions';
-import { userLoginAction } from '@src/store/actions/user.actions';
+import { handleAuthResponse } from '@src/store/actions/user.actions';
 import { useDispatch } from 'react-redux';
-import { showSnackbarAction } from '@src/store/actions/notifications.actions';
+import { ALLOWED_AUTH_PROVIDERS } from '@src/services/firebase/firebase.types';
 
 
 export const Login = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
+  const loginExternal = (providerName) => {
+    loginWithExternalProvider(providerName)
+      .then((response) => {
+        dispatch(handleAuthResponse(response, () => navigate(homePath)));
+      });
+  };
+
   const handleSubmit = async (data) => {
     loginUser(data.email, data.password)
       .then((response) => {
-        if (response.success) {
-          dispatch(userLoginAction(response.user));
-          dispatch(showSnackbarAction({ message: `Bienvenido, ${response.user.displayName}` }));
-          navigate(homePath);
-        } else {
-          dispatch(showSnackbarAction({ message: `${response.message}` }));
-          console.error('El erro es: ', response);
-        }
-        console.log('La respuesta es: ', response);
+        dispatch(handleAuthResponse(response, () => navigate(homePath)));
       })
-      .catch(err => {
-        console.error('Hubo un error: ', err);
-      });
+      .catch(err => console.error('Hubo un error: ', err));
   };
 
   return (
@@ -65,16 +62,16 @@ export const Login = () => {
           sx={{ mt: 1 }}
         >
           <Button
-            type='submit'
+            onClick={() => { loginExternal(ALLOWED_AUTH_PROVIDERS.GITHUB); }}
             fullWidth
             variant='outlined'
             sx={{ my: 1 }}
-            startIcon={<Facebook />}
+            startIcon={<GitHub />}
           >
-            Inicia con Facebook
+            Inicia con Github
           </Button>
           <Button
-            type='submit'
+            onClick={() => { loginExternal(ALLOWED_AUTH_PROVIDERS.GOOGLE); }}
             fullWidth
             variant='outlined'
             sx={{ my: 1 }}

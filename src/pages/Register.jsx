@@ -9,36 +9,26 @@ import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
 import { Link, useNavigate } from 'react-router-dom';
 import { homePath, loginPath } from '@src/commons/routes';
-import { Facebook, Google } from '@mui/icons-material';
+import { GitHub, Google } from '@mui/icons-material';
 import { MovieZillaIcon } from '@src/components/MovieZillaIcon';
 import { FormContainer, TextFieldElement, PasswordElement, CheckboxElement } from 'react-hook-form-mui';
 import { emailRegex } from '@src/utils/regularExpressions';
 import { createUser } from '@src/services/firebase/auth';
 import { useDispatch } from 'react-redux';
-import { userLoginAction } from '@src/store/actions/user.actions';
-import { showSnackbarAction } from '@src/store/actions/notifications.actions';
+import { handleAuthResponse } from '@src/store/actions/user.actions';
 
 export default () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
   const handleSubmit = async (data) => {
-    // console.log('La información es: ', data, data.sendEmail, !!data.sendEmail);
-    // return;
     const user = createUser({
       password: data.password,
       email: data.email,
       displayName: `${data.firstName} ${data.lastName}`,
       verifyEmail: !!data.sendEmail,
     }).then((response) => {
-      if (response.success) {
-        dispatch(userLoginAction(response.user));
-        dispatch(showSnackbarAction({ message: `Bienvenido, ${data.firstName}` }));
-        navigate(homePath);
-      } else {
-        dispatch(showSnackbarAction({ message: `${response.message}` }));
-        console.error('El erro es: ', response);
-      }
+      dispatch(handleAuthResponse(response, () => navigate(homePath)));
     });
     console.log(data, user);
   };
@@ -63,9 +53,9 @@ export default () => {
           fullWidth
           variant='outlined'
           sx={{ my: 1 }}
-          startIcon={<Facebook />}
+          startIcon={<GitHub />}
         >
-          Registrar con Facebook
+          Registrar con Github
         </Button>
         <Button
           type='submit'
