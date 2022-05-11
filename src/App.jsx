@@ -10,7 +10,7 @@ import { SnackBarNotification } from './components/SnackBarNotification';
 import { renderRouteWithGuards } from './commons/routeUtils';
 import { DarkModeThemeProvider } from './hocs/DarkModeThemeProvider.hoc';
 import { getMovie } from './services/movies/MoviesService';
-
+import { TempPage } from '@pages/TempPage';
 
 const App = () => {
   const [previousSessionReady, setPreviousSessionReady] = useState(false);
@@ -43,7 +43,7 @@ const App = () => {
           <Navbar />
           {
             !previousSessionReady
-              ? (<h1>Cargando sesión anterior</h1>)
+              ? (<TempPage text='Cargando sesión anterior' />)
               : (<Routes>
                 {renderRoutes()}
                 <Route path='*' element={<h1>No se encontró la página que buscabas</h1>} />
