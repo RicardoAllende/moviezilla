@@ -1,20 +1,5 @@
-import { v4 as uuid } from 'uuid';
-import { TYPES } from '../types';
-import { showSnackbarAction } from './notifications.actions';
-
-export const userLoginActionAsync = ({ name }) => dispatch => {
-  console.log('Haciendo dispatch con thunk', dispatch);
-  const payload = {
-    id: uuid(),
-    name,
-    start: new Date().getTime()
-  };
-  dispatch(userLoginAction(payload));
-};
-
-export const userLogOutAction2 = () => dispatch => {
-  dispatch(userLogOutAction());
-};
+import { showSnackbarAction } from '@store/reducers/notifications.reducer';
+import { loginUserAction } from '@store/reducers/user.reducer';
 
 export const userLoginActionIfNotLoggedIn = (user) => (dispatch, getState) => {
   const { userReducer } = getState();
@@ -23,22 +8,15 @@ export const userLoginActionIfNotLoggedIn = (user) => (dispatch, getState) => {
   }
 };
 
-export const userLoginAction = (user) => ({
-  type: TYPES.USER.LOGIN,
-  payload: {
-    uid: user.uid,
-    email: user.email,
-    emailVerified: user.emailVerified,
-    isAnonymous: user.isAnonymous,
-    createdAt: user.createdAt,
-    lastLoginAt: user.lastLoginAt,
-    displayName: user.displayName,
-    authProviderId: user?.providerData[0]?.providerId || 'password',
-  },
-});
-
-export const userLogOutAction = () => ({
-  type: TYPES.USER.LOGOUT,
+const userLoginAction = (user) => loginUserAction({
+  uid: user.uid,
+  email: user.email,
+  emailVerified: user.emailVerified,
+  isAnonymous: user.isAnonymous,
+  createdAt: user.createdAt,
+  lastLoginAt: user.lastLoginAt,
+  displayName: user.displayName,
+  authProviderId: user?.providerData[0]?.providerId || 'password',
 });
 
 export const handleAuthResponse = (authResponse, onSuccess) => (dispatch) => {

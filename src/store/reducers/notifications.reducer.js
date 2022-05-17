@@ -1,4 +1,4 @@
-import { TYPES } from '@store/types';
+import { createSlice } from '@reduxjs/toolkit';
 
 const initialState = {
   snackbar: {
@@ -7,26 +7,20 @@ const initialState = {
   }
 };
 
-export const notificationsReducer = (state = initialState, action) => {
-  switch (action.type) {
-    case TYPES.NOTIFICATIONS.SHOW_SNACKBAR:
-      return {
-        ...state,
-        snackbar: {
-          ...state.snackbar,
-          show: true,
-          message: action.payload.message,
-        }
-      };
-    case TYPES.NOTIFICATIONS.HIDE_SNACKBAR:
-      return {
-        ...state,
-        snackbar: {
-          ...state.snackbar,
-          show: false,
-        }
-      };
-    default:
-      return state;
-  };
-};
+export const notificationsSlice = createSlice({
+  name: 'notificationsReducer',
+  initialState,
+  reducers: {
+    showSnackbarAction(state, action) {
+      console.log('ShowSnackbar');
+      state.snackbar.show = true;
+      state.snackbar.message = action.payload.message;
+    },
+    hideSnackbarAction(state) {
+      console.log('hideSnackbar');
+      state.snackbar.show = false;
+    }
+  }
+});
+
+export const { showSnackbarAction, hideSnackbarAction } = notificationsSlice.actions;
