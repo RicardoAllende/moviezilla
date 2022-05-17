@@ -4,6 +4,8 @@ import { Login } from '@pages/Login';
 import Register from '@pages/Register';
 import { TempPage } from '@pages/TempPage';
 import { MyAccount } from '@pages/MyAccount';
+import { Trends } from '@src/pages/Trends';
+import { MediaDetail } from '@pages/MediaDetail';
 
 export const paramSeparator = ':';
 
@@ -23,9 +25,8 @@ export const routes = {
     path: '/',
     displayName: 'Acerca de moviezilla',
     scopes: [],
-    guards: [],
+    guards: [], // Sin verificaciones, con o sin sesión
   },
-
   [loginId]: {
     component: Login,
     path: loginPath,
@@ -38,16 +39,32 @@ export const routes = {
     path: registerPath,
     displayName: 'Registrar usuario',
     scopes: ['public-page'],
-    guards: ['only-users-without-session'],
+    guards: ['only-users-without-session'], // Sin sesión iniciada
   },
-
   [homeId]: {
     component: Home,
     path: homePath,
     displayName: 'Home',
     scopes: [],
-    guards: ['auth',],
+    guards: ['auth'], // Solo usuarios autenticados
   },
+
+  'trends': {
+    component: Trends,
+    path: '/tendencias',
+    displayName: 'Tendencias',
+    scopes: ['navigation'], // Aparece como enlace de navegación
+    guards: ['auth'],
+  },
+
+  'media.show': {
+    component: MediaDetail,
+    path: `/media/:id`,
+    displayName: 'Detalle de película',
+    scopes: [],
+    guards: ['auth'],
+  },
+
   'movies': {
     component: () => <TempPage text='Películas' />,
     path: `/movies`,
