@@ -18,7 +18,7 @@ import { MovieZillaIcon } from './MovieZillaIcon';
 import { logoutFirebaseUser } from '@src/services/firebase/auth';
 import { useDispatch, useSelector } from 'react-redux';
 import { loginPath } from '@src/commons/routes';
-import { userLogOutAction } from '@src/store/actions/user.actions';
+import { logoutUserAction } from '@src/store/reducers/user.reducer';
 
 const publicPages = getPublicPages();
 const pages = getNavigationRoutes();
@@ -50,7 +50,7 @@ export const Navbar = () => {
 
   const closeSession = () => {
     setAnchorElUser(null);
-    dispatch(userLogOutAction());
+    dispatch(logoutUserAction());
     logoutFirebaseUser().then(() => {
       navigate(loginPath);
     });

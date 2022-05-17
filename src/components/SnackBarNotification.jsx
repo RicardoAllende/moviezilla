@@ -1,5 +1,5 @@
 import { Snackbar } from '@mui/material';
-import { hideSnackbarAction } from '@src/store/actions/notifications.actions';
+import { hideSnackbarAction } from '@src/store/reducers/notifications.reducer';
 import React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
