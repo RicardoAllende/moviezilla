@@ -4,11 +4,11 @@ import InfiniteScroll from 'react-infinite-scroll-component';
 import { useDispatch, useSelector } from 'react-redux';
 
 import { Trending } from '@services/TheMovieDatabase/models/Trending';
-import { ResourceCard } from '@components/resource/ResourceCard';
-import { appendTendenciesAction } from '@store/reducers/tendencies.reducer';
+import { MediaCard } from '@src/components/media/MediaCard';
+import { appendTrendsAction } from '@src/store/reducers/trends.reducer';
 
 export const Trends = (props) => {
-  const { medias, currentPage } = useSelector(state => state.tendenciesReducer);
+  const { medias, currentPage } = useSelector(state => state.trendsReducer);
   const dispatch = useDispatch();
   const lastPage = 2;
   const hasMorePages = currentPage < lastPage;
@@ -20,7 +20,7 @@ export const Trends = (props) => {
     trending.getAllDailyTrending({ page: newPage })
       .then(response => {
         const results = response.data.results;
-        dispatch(appendTendenciesAction({ medias: results }));
+        dispatch(appendTrendsAction({ medias: results }));
       });
   }, [currentPage, dispatch, medias]);
 
@@ -42,7 +42,7 @@ export const Trends = (props) => {
         <Grid container spacing={2}>
           {medias.map((i, index) => (
             <Grid key={index} item xs={12} md={6} lg={4}>
-              <ResourceCard resource={i} />
+              <MediaCard resource={i} />
             </Grid>
           ))}
         </Grid>
