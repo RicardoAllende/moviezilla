@@ -21,7 +21,7 @@ export const createUser = async ({ email, password, displayName, verifyEmail = f
         console.log('Enviando email a ', email);
         sendEmailVerification(user);
       }
-      await updateUser(user, { displayName, photoURL: 'fd' });
+      await updateUser(user, { displayName });
       return {
         success: true,
         user,
@@ -32,6 +32,10 @@ export const createUser = async ({ email, password, displayName, verifyEmail = f
       success: false,
       message: getTranslation(err?.code)
     }));
+};
+
+export const sendEmailVerificationToUser = (user = null) => {
+  sendEmailVerification(user || auth.currentUser);
 };
 
 export const updateUser = (user, { displayName, photoURL }) => {

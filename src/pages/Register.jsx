@@ -69,7 +69,7 @@ export default () => {
         <Box
           component={FormContainer}
           defaultValues={{
-            firstName: 'Ricardo',
+            firstName: 'Rinosaurio',
             lastName: 'Allende',
             email: 'rinosaurio@yopmail.com',
             password: 'Secret123',

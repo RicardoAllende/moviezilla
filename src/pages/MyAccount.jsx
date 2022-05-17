@@ -1,4 +1,5 @@
 import { Button, Typography } from '@mui/material';
+import { sendEmailVerificationToUser } from '@src/services/firebase/auth';
 import React from 'react';
 import { useSelector } from 'react-redux';
 import { TempPage } from './TempPage';
@@ -18,7 +19,8 @@ export const MyAccount = () => {
             <Button
               type='button'
               variant='contained'
-              sx={{ mt: 3, mb: 2 }}
+              sx={{ mt: 3, mb: 2, color: 'white' }}
+              onClick={() => sendEmailVerificationToUser()}
             >
               Verificar cuenta
             </Button>

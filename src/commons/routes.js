@@ -6,6 +6,7 @@ import { TempPage } from '@pages/TempPage';
 import { MyAccount } from '@pages/MyAccount';
 import { Trends } from '@src/pages/Trends';
 import { MediaDetail } from '@pages/MediaDetail';
+import { userIsVerified } from '@src/utils/sessionUtils';
 
 export const paramSeparator = ':';
 
@@ -126,9 +127,7 @@ export const routeGuards = {
   },
   'verified-user': {
     'redirectIfNotAllowed': myAccountPath,
-    'resolver': ({ userReducer }) => {
-      return userReducer?.emailVerified;
-    },
+    'resolver': ({ userReducer }) => userIsVerified(userReducer),
     messageIfRedirected: 'Necesitar verificar tu cuenta',
   },
 };
